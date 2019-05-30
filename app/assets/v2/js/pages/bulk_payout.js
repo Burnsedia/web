@@ -26,15 +26,15 @@ $(document).ready(function($) {
 
   $(document).on('click', '.toggleType', function(event) {
     event.preventDefault();
-    if($(this).data('type') == 'no'){
-      $(this).html("(%)");
+    if ($(this).data('type') == 'no') {
+      $(this).html('(%)');
       $(this).data('type', 'pct');
     } else {
-      $(this).html("(#)");
+      $(this).html('(#)');
       $(this).data('type', 'no');
     }
-    //$(".input_amount").html("0");
-    $(".input_amount").trigger("input");
+    // $(".input_amount").html("0");
+    $('.input_amount').trigger('input');
   });
 
 
