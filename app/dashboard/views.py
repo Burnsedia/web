@@ -837,8 +837,21 @@ def users_fetch(request):
     params = dict()
     all_pages = Paginator(profile_list, limit)
     all_users = []
-    for user in all_pages.page(page):
-        profile_json = {}
+
+    this_page = all_pages.page(page)
+
+    this_page = Profile.objects.filter(pk__in=[ele.pk for ele in this_page]).order_by('-actions_count').annotate(
+        previous_worked_count=Count('fulfilled', filter=Q(
+            fulfilled__bounty__network=network,
+            fulfilled__accepted=True,
+            fulfilled__bounty__bounty_owner_github_username__iexact=current_user.profile.handle
+        ))).annotate(
+            count=Count('fulfilled', filter=Q(fulfilled__bounty__network=network, fulfilled__accepted=True))
+        ).annotate(
+            average_rating=Avg('feedbacks_got__rating', filter=Q(feedbacks_got__bounty__network=network))
+        )
+
+    for user in this_page:
         previously_worked_with = 0
         if current_user:
             previously_worked_with = BountyFulfillment.objects.filter(
